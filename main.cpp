@@ -33,15 +33,35 @@ void readMCodes(vector<string> &vec) {
         vec.push_back(line);
 
 
+    file.close();
+}
+
+void readTransmission(vector<string> &vec, string f) {
+    ifstream file(f);
+
+    if (!file.is_open()) {
+        cerr << "No se pudo abrir el archivo de transmision " << f << "\"" << endl;
+        return;
+    }
+
+    string line;
+    while (getline(file, line))
+        vec.push_back(line);
 
     file.close();
 }
 
 int main() {
-    vector<string> mcodes;
+    vector<string> mcodes, transmissions;
+
+    // read the files and store the data
     readMCodes(mcodes);
+    readTransmission(transmissions, "./in/transmission1.txt");
+    readTransmission(transmissions, "./in/transmission2.txt");
+    readTransmission(transmissions, "./in/transmission3.txt");
 
     printVectorOfStrings(mcodes);
+    cout << transmissions.size() << endl;
 
     return 0;
 }
