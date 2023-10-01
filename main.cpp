@@ -231,6 +231,64 @@ void manacher(string s) {
 }
 
 
+/**
+ * Finds the Longest Common Substring (LCSubstr) between two strings.
+ *
+ * Description:
+ * This function determines the longest substring that is common to both the given strings using a dynamic programming approach.
+ * It constructs a 2D array (lcs) to store the length of the LCSubstr considering the strings up to the respective indices.
+ * The function iterates through both strings and populates the 2D array based on character matches, tracking the longest substring found.
+ *
+ * Parameters:
+ * - s1: The first string.
+ * - s2: The second string.
+ *
+ * Returns:
+ * - The longest common substring of s1 and s2. If there are multiple substrings of the same maximum length, it returns the first one encountered.
+ *
+ * Complexity:
+ * - Time: O(m * n), where m is the length of the first string and n is the length of the second string.
+ */
+string longestSubstring(string s1, string s2) {
+    int lenS1 = s1.length(), lenS2 = s2.length(), max = 0;
+    string maxStr = "";
+
+    vector<vector<int>> lcs(lenS1, vector<int>(lenS2, 0));
+
+    // fill first col (s1)
+    for(int i = 0; i < lenS1; i++) {
+        if(s1[i] == s2[0]) {
+            lcs[i][0] = 1;
+            max = 1;
+        }
+    }
+
+    // fill first row (s2)
+    for(int j = 0; j < lenS2; j++) {
+        if(s1[0] == s2[j]) {
+            lcs[0][j] = 1;
+            max = 1;
+        }
+    }
+
+    int actual;
+    for(int i = 1; i < lenS1; i++) {
+        for(int j = 1; j < lenS2; j++) {
+            if(s1[i] == s2[j]) {
+                actual = lcs[i-1][j-1] + 1;
+                lcs[i][j] = actual;
+                if(actual > max) {
+                    max = actual;
+                    maxStr = s1.substr(i - actual + 1, actual);
+                }
+            }
+        }
+    }
+
+    return maxStr;
+}
+
+
 int main() {
     vector<string> mcodes, transmissions;
 
@@ -260,6 +318,15 @@ int main() {
         manacher(transmissions[i]);
         cout << "----" << endl;
     }
+
+    cout << "==============" << endl;
+
+    // 3. largest substring between files
+    cout << "Los Substring más largos son:" << endl;
+
+    cout << "T1-T2 ==> " << longestSubstring(transmissions[0], transmissions[1]) << endl;
+    cout << "T1-T3 ==> " << longestSubstring(transmissions[0], transmissions[2]) << endl;
+    cout << "T2-T3 ==> " << longestSubstring(transmissions[1], transmissions[2]) << endl;
 
     return 0;
 }
