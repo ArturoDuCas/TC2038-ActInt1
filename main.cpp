@@ -12,6 +12,8 @@
 #include <fstream>
 using namespace std;
 
+ofstream outFile;
+
 
 void printVectorOfStrings(vector<string> vec) {
     for(int i = 0; i < vec.size(); i++) {
@@ -137,14 +139,14 @@ vector<int> kmp(string texto, string patron){
 }
 
 void printKMPOcurrences(vector<int> posMatch) {
-    cout << posMatch.size() << " veces" << endl;
+    outFile << posMatch.size() << " veces" << endl;
     for(int i = 0; i < posMatch.size(); i++) {
         if(i == posMatch.size() - 1) {
-            cout << posMatch[i];
-            cout << endl;
+            outFile << posMatch[i];
+            outFile << endl;
         }
         else
-            cout << posMatch[i] << ", ";
+            outFile << posMatch[i] << ", ";
     }
 }
 
@@ -223,11 +225,11 @@ void manacher(string s) {
     start = (maxLPSCenterPosition - maxLPSLength)/2;
     end = start + maxLPSLength - 1;
 
-    cout << "Posición: " << start << endl;
+    outFile << "Posición: " << start << endl;
     for(i=start; i<=end; i++)
-        cout << s[i];
+        outFile << s[i];
 
-    cout << endl;
+    outFile << endl;
 }
 
 
@@ -298,35 +300,41 @@ int main() {
     readTransmission(transmissions, "./in/transmission2.txt");
     readTransmission(transmissions, "./in/transmission3.txt");
 
-
-    // 1. Occurrences of malicious codes in each file.
-    for(int i = 0; i < mcodes.size(); i++) { // for each malicious code
-        cout << "Código: " << mcodes[i]    << endl;
-        for(int j = 0; j < transmissions.size(); j++) { // for each tranmission
-            cout << "Transmission" << j+1 << ".txt ==> ";
-            printKMPOcurrences(kmp(transmissions[j], mcodes[i]));
+    // for writing into the output file
+    outFile.open("checking.txt");
+    if(outFile.is_open()) {
+        // 1. Occurrences of malicious codes in each file.
+        for(int i = 0; i < mcodes.size(); i++) { // for each malicious code
+            outFile << "Código: " << mcodes[i]    << endl;
+            for(int j = 0; j < transmissions.size(); j++) { // for each tranmission
+                outFile << "Transmission" << j+1 << ".txt ==> ";
+                printKMPOcurrences(kmp(transmissions[j], mcodes[i]));
+            }
+            outFile << "--------------" << endl;
         }
-        cout << "--------------" << endl;
+
+        outFile << "==============" << endl;
+
+        // 2. largest palindrome
+        outFile << "Palíndromo más grande:" << endl;
+        for(int i = 0; i < transmissions.size(); i++) { // for each transmission
+            outFile << "Transmission" << i+1 << ".txt ==> ";
+            manacher(transmissions[i]);
+            outFile << "----" << endl;
+        }
+
+        outFile << "==============" << endl;
+
+        // 3. largest substring between files
+        outFile << "Los Substring más largos son:" << endl;
+
+        outFile << "T1-T2 ==> " << longestSubstring(transmissions[0], transmissions[1]) << endl;
+        outFile << "T1-T3 ==> " << longestSubstring(transmissions[0], transmissions[2]) << endl;
+        outFile << "T2-T3 ==> " << longestSubstring(transmissions[1], transmissions[2]) << endl;
+
+        outFile.close();
+    } else {
+        cerr << "Unable to open the output file" << endl;
     }
-
-    cout << "==============" << endl;
-
-    // 2. largest palindrome
-    cout << "Palíndromo más grande:" << endl;
-    for(int i = 0; i < transmissions.size(); i++) { // for each transmission
-        cout << "Transmission" << i+1 << ".txt ==> ";
-        manacher(transmissions[i]);
-        cout << "----" << endl;
-    }
-
-    cout << "==============" << endl;
-
-    // 3. largest substring between files
-    cout << "Los Substring más largos son:" << endl;
-
-    cout << "T1-T2 ==> " << longestSubstring(transmissions[0], transmissions[1]) << endl;
-    cout << "T1-T3 ==> " << longestSubstring(transmissions[0], transmissions[2]) << endl;
-    cout << "T2-T3 ==> " << longestSubstring(transmissions[1], transmissions[2]) << endl;
-
     return 0;
 }
