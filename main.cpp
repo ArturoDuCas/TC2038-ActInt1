@@ -149,6 +149,88 @@ void printKMPOcurrences(vector<int> posMatch) {
 }
 
 
+/**
+ * Implements Manacher's algorithm to find the longest palindromic substring.
+ *
+ * Description:
+ * This function identifies and prints the longest palindromic substring in the given string using Manacher's algorithm.
+ * The algorithm preprocesses the string to accommodate even length palindromes and to simplify boundary checks.
+ * It maintains a "center" and a "right boundary" for the current palindrome and iteratively expands palindromes around
+ * the center, leveraging previously computed lengths to avoid redundant calculations.
+ *
+ * Parameters:
+ * - s: The input string for which we want to determine the longest palindromic substring.
+ *
+ * Returns:
+ * - None. The function prints the starting position and the content of the longest palindromic substring.
+ *
+ * Complexity:
+ * - Time: O(N), where N is the length of the string.
+ */
+void manacher(string s) {
+    int N = s.length();
+    if(N == 0)
+        return;
+
+    N = 2*N + 1;
+    int L[N];
+    L[0] = 0;
+    L[1] = 1;
+    int C = 1; //centerPosition
+    int R = 2; //centerRightPosition
+    int i = 0; //currentRightPosition
+    int iMirror; //currentLeftPosition
+    int maxLPSLength = 0;
+    int maxLPSCenterPosition = 0;
+    int start = -1;
+    int end = -1;
+    int diff = -1;
+
+
+    for (i = 2; i < N; i++)
+    {
+        iMirror = 2*C-i;
+        L[i] = 0;
+        diff = R - i;
+        if(diff > 0)
+            L[i] = min(L[iMirror], diff);
+
+
+        while ( ((i + L[i]) < N && (i - L[i]) > 0) &&
+                ( ((i + L[i] + 1) % 2 == 0) ||
+                  (s[(i + L[i] + 1)/2] == s[(i - L[i] - 1)/2] )))
+        {
+            L[i]++;
+        }
+
+        if(L[i] > maxLPSLength) // Track maxLPSLength
+        {
+            maxLPSLength = L[i];
+            maxLPSCenterPosition = i;
+        }
+
+        //If palindrome centered at currentRightPosition i
+        //expand beyond centerRightPosition R,
+        //adjust centerPosition C based on expanded palindrome.
+        if (i + L[i] > R)
+        {
+            C = i;
+            R = i + L[i];
+        }
+    }
+
+
+    start = (maxLPSCenterPosition - maxLPSLength)/2;
+    end = start + maxLPSLength - 1;
+
+    cout << "Posición: " << start << endl;
+    for(i=start; i<=end; i++)
+        cout << s[i];
+
+    cout << endl;
+}
+
+
 int main() {
     vector<string> mcodes, transmissions;
 
@@ -171,6 +253,13 @@ int main() {
 
     cout << "==============" << endl;
 
+    // 2. largest palindrome
+    cout << "Palíndromo más grande:" << endl;
+    for(int i = 0; i < transmissions.size(); i++) { // for each transmission
+        cout << "Transmission" << i+1 << ".txt ==> ";
+        manacher(transmissions[i]);
+        cout << "----" << endl;
+    }
 
     return 0;
 }
