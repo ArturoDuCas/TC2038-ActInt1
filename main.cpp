@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <string>
 #include <fstream>
 using namespace std;
@@ -290,8 +291,7 @@ string longestSubstring(string s1, string s2) {
     return maxStr;
 }
 
-<<<<<<< Updated upstream
-=======
+
 /**
  * Finds the Most Frequent Subsequence in Transmission Files.
  *
@@ -348,7 +348,6 @@ pair<pair<string, int>, int> findMostFrequentSubsequence(string code, vector<str
     // Return the most frequent subsequence and its number of occurrences, along with the file number.
     return make_pair(make_pair(mostFrequentSubsequences[0], maxOccurrences), maxOccurrencesFile);
 }
->>>>>>> Stashed changes
 
 int main() {
     vector<string> mcodes, transmissions;
@@ -369,8 +368,6 @@ int main() {
                 outFile << "Transmission" << j+1 << ".txt ==> ";
                 printKMPOcurrences(kmp(transmissions[j], mcodes[i]));
             }
-<<<<<<< Updated upstream
-=======
 
             // Call function to find subsequence with most occurrences
             pair<pair<string, int>, int> result = findMostFrequentSubsequence(mcodes[i], transmissions);
@@ -378,13 +375,16 @@ int main() {
             int maxOccurrences = result.first.second;
             int maxOccurrencesFile = result.second;
 
-            outFile << "La subsecuencia más encontrada es: \"" << mostFrequentSubsequence << "\" con "
+            outFile << "La subsecuencia más encontrada es: " << mostFrequentSubsequence << " con "
                     << maxOccurrences << " veces en el archivo Transmission" << maxOccurrencesFile + 1 << ".txt" << endl;
->>>>>>> Stashed changes
-            outFile << "--------------" << endl;
+
+            if(i != mcodes.size() - 1)
+                outFile << "--------------" << endl;
         }
 
+
         outFile << "==============" << endl;
+
 
         // 2. largest palindrome
         outFile << "Palíndromo más grande:" << endl;
