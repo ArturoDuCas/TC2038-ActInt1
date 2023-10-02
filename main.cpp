@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 #include <fstream>
 using namespace std;
 
@@ -290,6 +291,38 @@ string longestSubstring(string s1, string s2) {
     return maxStr;
 }
 
+pair<string, int> findMostFrequentSubsequence(string code, vector<string> transmissions) {
+    map<string, int> subsequenceCounts;
+
+    // Generate all possible subsequences
+    for (int i = 0; i < code.length(); i++) {
+        string subsequence = code.substr(0, i) + code.substr(i + 1);
+        subsequenceCounts[subsequence] = 0;
+    }
+
+    int maxOccurrences = 0;
+    string maxOccurrencesFile;
+
+    // Count numer of ocurrencies of each subsequence in each file
+    for (int j = 0; j < transmissions.size(); j++) { // for each transmission
+        for (const auto& entry : subsequenceCounts) {
+            vector<int> positions = kmp(transmissions[j], entry.first);
+            int occurrences = positions.size();
+            subsequenceCounts[entry.first] += occurrences;
+            if (occurrences > maxOccurrences) {
+                maxOccurrences = occurrences;
+                maxOccurrencesFile = to_string(j);
+            }
+        }
+    }
+
+    // Find the subsequence with the most ocurrencies
+    string mostFrequentSubsequence = code.substr(0, stoi(maxOccurrencesFile)) +
+                                    code.substr(stoi(maxOccurrencesFile) + 1);
+
+    // Return the subsequence
+    return make_pair(mostFrequentSubsequence, maxOccurrences);
+}
 
 int main() {
     vector<string> mcodes, transmissions;
@@ -310,6 +343,15 @@ int main() {
                 outFile << "Transmission" << j+1 << ".txt ==> ";
                 printKMPOcurrences(kmp(transmissions[j], mcodes[i]));
             }
+
+            // Call function to find subsequence with most ocurrences
+            pair<string, int> result = findMostFrequentSubsequence(mcodes[i], transmissions);
+            string mostFrequentSubsequence = result.first;
+            int maxOccurrences = result.second;
+            string maxOccurrencesFile = result.first;
+
+            outFile << "La subsecuencia más encontrada es: \"" << mostFrequentSubsequence << "\" con "
+                    << maxOccurrences << " veces en el archivo Transmission" << /*stoi(maxOccurrencesFile) + 1 << ".txt" << */ endl;
             outFile << "--------------" << endl;
         }
 
