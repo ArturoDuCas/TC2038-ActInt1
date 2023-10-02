@@ -290,6 +290,65 @@ string longestSubstring(string s1, string s2) {
     return maxStr;
 }
 
+<<<<<<< Updated upstream
+=======
+/**
+ * Finds the Most Frequent Subsequence in Transmission Files.
+ *
+ * Description:
+ * This function searches for the subsequence of a given code within a collection of transmission files.
+ * It generates all possible subsequences of the input code and counts their occurrences in each transmission file.
+ * The function tracks the subsequence with the highest number of occurrences and returns it along with the count.
+ *
+ * Parameters:
+ * - code: The input code for which subsequences are generated and searched.
+ * - transmissions: A vector of transmission files where occurrences are counted.
+ *
+ * Returns:
+ * - A pair containing the most frequent subsequence found and its corresponding occurrence count.
+ *
+ * Complexity:
+ * - Time: O(n * m * k), where:
+ *   - "n" is the length of the input code string.
+ *   - "m" is the average length of transmission files.
+ *   - "k" is the number of transmission files.
+ */
+
+pair<pair<string, int>, int> findMostFrequentSubsequence(string code, vector<string> transmissions) {
+    map<string, int> subsequenceCounts;
+
+    // Generate all possible subsequences and initialize their counts to 0.
+    for (int i = 0; i < code.length(); i++) {
+        string subsequence = code.substr(0, i) + code.substr(i + 1);
+        subsequenceCounts[subsequence] = 0;
+    }
+
+    int maxOccurrences = 0;
+    int maxOccurrencesFile = -1; // Initialize with an invalid value
+    vector<string> mostFrequentSubsequences;
+
+    // Iterate through each transmission file.
+    for (int j = 0; j < transmissions.size(); j++) {
+        for (const auto& entry : subsequenceCounts) {
+            vector<int> positions = kmp(transmissions[j], entry.first);
+            int occurrences = positions.size();
+            subsequenceCounts[entry.first] += occurrences;
+
+            // Update maxOccurrences and the list of most frequent subsequences.
+            if (occurrences > maxOccurrences) {
+                maxOccurrences = occurrences;
+                maxOccurrencesFile = j; // Update the file number
+                mostFrequentSubsequences = {entry.first};
+            } else if (occurrences == maxOccurrences) {
+                mostFrequentSubsequences.push_back(entry.first);
+            }
+        }
+    }
+
+    // Return the most frequent subsequence and its number of occurrences, along with the file number.
+    return make_pair(make_pair(mostFrequentSubsequences[0], maxOccurrences), maxOccurrencesFile);
+}
+>>>>>>> Stashed changes
 
 int main() {
     vector<string> mcodes, transmissions;
@@ -310,6 +369,18 @@ int main() {
                 outFile << "Transmission" << j+1 << ".txt ==> ";
                 printKMPOcurrences(kmp(transmissions[j], mcodes[i]));
             }
+<<<<<<< Updated upstream
+=======
+
+            // Call function to find subsequence with most occurrences
+            pair<pair<string, int>, int> result = findMostFrequentSubsequence(mcodes[i], transmissions);
+            string mostFrequentSubsequence = result.first.first;
+            int maxOccurrences = result.first.second;
+            int maxOccurrencesFile = result.second;
+
+            outFile << "La subsecuencia más encontrada es: \"" << mostFrequentSubsequence << "\" con "
+                    << maxOccurrences << " veces en el archivo Transmission" << maxOccurrencesFile + 1 << ".txt" << endl;
+>>>>>>> Stashed changes
             outFile << "--------------" << endl;
         }
 
